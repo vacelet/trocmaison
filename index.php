@@ -14,10 +14,6 @@
 
     <?php include($_SERVER['DOCUMENT_ROOT']."/htmlpage/menu.php"); ?>
     <?php include($_SERVER['DOCUMENT_ROOT']."/include/message.php"); ?>
-    <br>
-    <br>
-    <br>
-    <br>
     <?php include($_SERVER['DOCUMENT_ROOT']."/mode/router.php") ; ?>
 
   </div>

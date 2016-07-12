@@ -4,7 +4,7 @@
 # router.php : route according index param : mode / category / action 
 # Available only for admin account
 # Author : Nicolas Vacelet
-# Last update : 04/02/2015
+# Last update : 12/07/2016
 #
 #-----------------------------------
 
@@ -16,6 +16,14 @@ if (isset($_GET['action'])) {
 		switch ( $_GET['action'] ) {
 			case "view":
 				include(DOCUMENTROOT.'/mode/show/article/'.$_GET['action'].'.php');
+				break;
+				
+			case "insert":
+				insertComment();
+				break;
+
+			case "update":
+				updateComment();
 				break;
 
 			default:

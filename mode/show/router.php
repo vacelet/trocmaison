@@ -4,7 +4,7 @@
 # router.php : route according index param : mode / category / action 
 # Available only for admin account
 # Author : Nicolas Vacelet
-# Last update : 04/02/2015
+# Last update : 12/07/2016
 #
 #-----------------------------------
 
@@ -22,7 +22,7 @@ if (isset($_GET['category'])) {
 				include(DOCUMENTROOT.'/mode/show/'.$_GET['category'].'/router.php');
 				break;
 
-		case "tag":
+			case "tag":
 				include(DOCUMENTROOT.'/mode/show/'.$_GET['category'].'/router.php');
 				break;
 

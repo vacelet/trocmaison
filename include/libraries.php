@@ -3,7 +3,7 @@
 #
 # libraries.php : store all functions which can be reused
 # Author : Nicolas Vacelet
-# Last update : 01/06/2016
+# Last update : 12/07/2016
 #
 #-----------------------------------
 
@@ -21,6 +21,7 @@ DEFINE ('HTTPROOT', "http://".$_SERVER['SERVER_NAME']);
 DEFINE ('DOCUMENTROOT', getenv("DOCUMENT_ROOT"));
 #$HTTPROOT= "http://".$_SERVER['SERVER_NAME'];
 #$DOCUMENTROOT = getenv("DOCUMENT_ROOT") ;
+date_default_timezone_set('Europe/Paris');
 
 #
 # Connect to SQL
@@ -348,7 +349,7 @@ function insertLog($msg, $alerte="info"){
 }
 
 #
-# Delet log
+# Delete log
 #
 function deleteLog(){
   if ( empty($_POST['lidInput']) ) {
@@ -364,6 +365,53 @@ function deleteLog(){
 
   $_SESSION['message_system'] = array('type' => 'info', "content" => " Les messages ont &eacutet&eacute supprim&eacutes. ");
   RedirectToIndex(HTTPROOT."/index.php?mode=admin&category=log&action=list");
+}
+
+#
+# Insert comment
+#
+function insertComment(){
+  $user = $_SESSION['user']['user'];
+  
+  if ( empty($_POST['commentInput']) ) {
+	  $_SESSION['message_system'] = array('type' => 'warning', "content" => "Votre commentaire n'a pas &eacutet&eacute enregistr&eacute car il est est vide.");
+  } else {
+	  $sql = 'INSERT INTO comment (cid, caid, ccomment, cpublished, cstar, ccdate, cauthor)  
+		VALUES (NULL,
+		"'.($_POST['aidInput']).'",
+		"'.$_POST['commentInput'].'",
+		"1",
+		"0",
+		"'.date("Y-m-j H:i:s").'",
+		"'.$user.'"
+		)';
+	  SQLQuery($sql);
+	  
+	  insertLog("Le commentaire de moi a été enregistr&eacute par ".$user, "success");
+	  $_SESSION['message_system'] = array('type' => 'info', "content" => "Votre commentaire a &eacute;t&eacute; pris en compte.");
+  }
+  RedirectToIndex(HTTPROOT."/index.php?mode=show&category=article&action=view&name=".$_POST['anameInput']);
+}
+
+#
+# Update comment
+#
+function updateComment(){
+  $user = $_SESSION['user']['user'];
+	
+  if ( empty($_POST['commentInput']) ) {
+	  $_SESSION['message_system'] = array('type' => 'warning', "content" => "Votre commentaire n'a pas &eacutet&eacute enregistr&eacute car il est est vide.");
+  } else {
+    $sql = 'UPDATE comment SET 
+      ccomment = "'.$_POST['commentInput'].'"
+      WHERE cid = '.$_POST['cidInput'].' LIMIT 1';
+    SQLQuery($sql);
+
+    insertLog("Un commentaire a été mis a jour par ".$user, "success");
+
+    $_SESSION['message_system'] = array('type' => 'info', "content" => "Votre commentaire a &eacute;t&eacute; pris en compte.");
+  }
+  RedirectToIndex(HTTPROOT."/index.php?mode=show&category=article&action=view&name=".$_POST['anameInput']);
 }
 
 #

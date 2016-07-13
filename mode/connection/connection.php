@@ -30,11 +30,11 @@ if (isset($_POST['LoginInput']) && isset($_POST['PasswordInput'])){
 
   <form action="index.php?mode=connection&category=connection" method="post">
     <div class="form-group">
-        <label for="login">Compte</label>
+        <label for="LoginInput">Compte</label>
         <input class="form-control" type="text" placeholder="compte" name="LoginInput">
     </div>
     <div class="form-group">
-        <label for="login">Mot de passe</label>
+        <label for="PasswordInput">Mot de passe</label>
         <input class="form-control" type="password" placeholder="mot de passe" name="PasswordInput">
     </div>
       

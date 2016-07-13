@@ -114,8 +114,8 @@ while($TagRelatedToArticle = mysql_fetch_assoc($reqTagRelatedToArticle)) {
 
   <!--  amapInput -->
   <div class="form-group">
-  	<label for="amapInput">Coordonnees google map</label>
-  	<input type="text" class="form-control" value="<?php echo $article["amap"]; ?>" name="amapInput">
+  	<label for="amapInput">Coordonn&eacute;es google map</label>
+  	<input type="text" value="<?php echo $article["amap"]; ?>" name="amapInput">
   </div>
 
   <!-- tag -->

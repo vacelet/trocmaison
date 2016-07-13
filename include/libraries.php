@@ -7,15 +7,25 @@
 #
 #-----------------------------------
 
+$MODE = "PREPROD";
+
+#PROD
+if ($MODE == "PROD") {
+  DEFINE ('DB_NAME', 'colaflo'); 
+  DEFINE ('DB_PASSWORD', 'Orange06');
+  DEFINE ('DB_HOST', '127.0.0.1');
+}
+
+#PREPROD
+if ($MODE == "PREPROD") {
+  #DEFINE ('DB_USER', 'vacelet.nicolas');
+  DEFINE ('DB_USER', 'root');
+  DEFINE ('DB_PASSWORD', 'root');
+  DEFINE ('DB_HOST', '127.0.0.1');
+  DEFINE ('DB_NAME', 'colaflo');
+}
+
 #Global Variable
-#DEFINE ('DB_USER', 'vacelet.nicolas');
-DEFINE ('DB_USER', 'root');
-#DEFINE ('DB_PASSWORD', 'Orange006');
-DEFINE ('DB_PASSWORD', 'root');
-#DEFINE ('DB_HOST', '172.16.0.86');
-DEFINE ('DB_HOST', '127.0.0.1');
-#DEFINE ('DB_NAME', 'vacelet_nicolas'); 
-DEFINE ('DB_NAME', 'colaflo'); 
 DEFINE ('GOOGLE_MAP_HOME_LATLNG', '43.62107,6.93520');
 DEFINE ('HTTPROOT', "http://".$_SERVER['SERVER_NAME']);
 DEFINE ('DOCUMENTROOT', getenv("DOCUMENT_ROOT"));
@@ -104,8 +114,8 @@ function insertArticle(){
     "'.$_POST['categoryInput'].'",
     "'.$_POST['subcategoryInput'].'",
     "'.($_POST['titleInput']).'",
-    "'.$_POST['contentInput'].'",
-    "'.($_POST['addressInput']).'",
+    "'.htmlspecialchars($_POST['contentInput']).'",
+    "'.htmlspecialchars($_POST['addressInput']).'",
     "'.$_POST['amapInput'].'",
     "",
     "")';
@@ -127,24 +137,18 @@ function insertArticle(){
 # Update article data
 #
 function updateArticle(){
-  #if(!empty($_POST['subcategoryInput'])) {
-  #  $subcategory = explode("-", $_POST['subcategoryInput']);
-  #} else {
-  #  $subcategory = array("","");
-  #}
-  #print_r($_POST['contentInput']);
-  #exit();
-
-  $sql = 'UPDATE article SET 
+  $sql = 'UPDATE article SET
     atitle = "'.$_POST['titreInput'].'",
     apublished = "'.$_POST['publishedInput'].'",
     acategory = "'.$_POST['categoryInput'].'",
     asubcategory = "'.$_POST['subcategoryInput'].'",
-    acontent = "'.$_POST['contentInput'].'",
-    aaddress = "'.$_POST['addressInput'].'",
+    acontent = "'.htmlspecialchars($_POST['contentInput']).'",
+    aaddress = "'.htmlspecialchars($_POST['addressInput']).'",
     amap = "'.$_POST['amapInput'].'",
-    atags = "" 
+    atags = ""
     WHERE aid = '.$_POST['aidInput'].' LIMIT 1';
+  #echo $sql;
+  #exit;
   SQLQuery($sql);
 
   updateTagRelatedToArticle($_POST['atagInput'], $_POST['aidInput']);

@@ -7,7 +7,7 @@
 #
 #-----------------------------------
 
-$MODE = "PREPROD";
+$MODE = "PROD";
 
 #PROD
 if ($MODE == "PROD") {
@@ -114,8 +114,8 @@ function insertArticle(){
     "'.$_POST['categoryInput'].'",
     "'.$_POST['subcategoryInput'].'",
     "'.($_POST['titleInput']).'",
-    "'.htmlspecialchars($_POST['contentInput']).'",
-    "'.htmlspecialchars($_POST['addressInput']).'",
+    "'.str_replace("\"", "\\\"", $_POST['contentInput']).'",
+    "'.str_replace("\"", "\\\"", $_POST['addressInput']).'",
     "'.$_POST['amapInput'].'",
     "",
     "")';
@@ -142,8 +142,8 @@ function updateArticle(){
     apublished = "'.$_POST['publishedInput'].'",
     acategory = "'.$_POST['categoryInput'].'",
     asubcategory = "'.$_POST['subcategoryInput'].'",
-    acontent = "'.htmlspecialchars($_POST['contentInput']).'",
-    aaddress = "'.htmlspecialchars($_POST['addressInput']).'",
+    acontent = "'.str_replace("\"", "\\\"", $_POST['contentInput']).'",  
+    aaddress = "'.str_replace("\"", "\\\"", $_POST['addressInput']).'",  
     amap = "'.$_POST['amapInput'].'",
     atags = ""
     WHERE aid = '.$_POST['aidInput'].' LIMIT 1';

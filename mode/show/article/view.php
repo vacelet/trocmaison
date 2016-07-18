@@ -27,7 +27,7 @@ $reqArticle = SQLQuery('SELECT aid, aname, atitle, acontent, aaddress, amap, ata
 
       <!-- first colum -->
       <div class="col-md-5 col-sm-12">
-            <?php echo '<hr>'.$dataArticle['acontent'].'<hr>'; ?>
+            <?php echo $dataArticle['acontent'].'<hr>'; ?>
             <br>
 			<?php include($_SERVER['DOCUMENT_ROOT']."/mode/show/article/comment.php"); ?>
       </div>

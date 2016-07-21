@@ -7,16 +7,20 @@
 #
 #-----------------------------------
 
-$MODE = "PROD";
+$MODE = "PREPROD";
 
-#PROD
+/**
+ * PROD
+ */
 if ($MODE == "PROD") {
   DEFINE ('DB_NAME', 'colaflo'); 
   DEFINE ('DB_PASSWORD', 'Orange06');
   DEFINE ('DB_HOST', '127.0.0.1');
 }
 
-#PREPROD
+/**
+ * PREPROD
+ */
 if ($MODE == "PREPROD") {
   #DEFINE ('DB_USER', 'vacelet.nicolas');
   DEFINE ('DB_USER', 'root');
@@ -25,7 +29,9 @@ if ($MODE == "PREPROD") {
   DEFINE ('DB_NAME', 'colaflo');
 }
 
-#Global Variable
+/**
+ * Global Variable
+ */
 DEFINE ('GOOGLE_MAP_HOME_LATLNG', '43.62107,6.93520');
 DEFINE ('HTTPROOT', "http://".$_SERVER['SERVER_NAME']);
 DEFINE ('DOCUMENTROOT', getenv("DOCUMENT_ROOT"));
@@ -33,24 +39,25 @@ DEFINE ('DOCUMENTROOT', getenv("DOCUMENT_ROOT"));
 #$DOCUMENTROOT = getenv("DOCUMENT_ROOT") ;
 date_default_timezone_set('Europe/Paris');
 
-#
-# Connect to SQL
+/**
+ * Connect to SQL
+ */
 function SQLConnect() {
   $link =  mysql_connect(DB_HOST, DB_USER, DB_PASSWORD) or die("Impossible de se connecter : " . mysql_error());
   mysql_select_db(DB_NAME,$link);
   return $link;
 }
 
-#
-# Close SQL
-#
+/**
+ * Close SQL
+ */
 function SQLClose($link) {
   mysql_close($link);
 }
 
-#
-# Query SQL
-#
+/**
+ * Query SQL
+ */
 function SQLQuery($sql) {
   $link = SQLConnect();
   $req = mysql_query($sql) or die('Erreur SQL !<br>'.$sql.'<br>'.mysql_error());
@@ -58,11 +65,12 @@ function SQLQuery($sql) {
   return $req;
 }
 
-# If login is exist then 
-# seed $_SESSION['user'] and $_SESSION['message_system'] = info, 
-# else 
-# reset $_SESSION['user'] and $_SESSION['message_system'] = error
-#
+/** If login is exist then 
+ * seed $_SESSION['user'] and $_SESSION['message_system'] = info, 
+ * else 
+ * reset $_SESSION['user'] and $_SESSION['message_system'] = error
+ *
+ */
 function IsLoginValid () {
   
   $sql = 'SELECT llogin, lpassword, lsalt, llevel, lcomment FROM login WHERE llogin = "'.$_POST['LoginInput'].'" AND lpassword = "'.md5($_POST['PasswordInput']).'" AND lavailable = 1 LIMIT 1'; 
@@ -83,18 +91,18 @@ function IsLoginValid () {
 
 } 
 
-#
-# Logout and reset session variables 
-#
+/**
+ * Logout and reset session variables 
+ */
 function Disconnect() {
   $_SESSION = array();
   $_SESSION['message_system'] = @array('type' => 'info', "content" => "Vous &ecirc;tes d&eacute;connect&eacute;. Merci de votre visite");
   RedirectToIndex(HTTPROOT);
 }
 
-#
-# Redirect to index using string $url 
-#
+/**
+ * Redirect to index using string $url 
+ */
 function RedirectToIndex($url) {
   echo '<script language="Javascript">
     <!--
@@ -103,9 +111,9 @@ function RedirectToIndex($url) {
   </script>';
 } 
 
-#
-# Insert article data
-#
+/**
+ * Insert article data
+ */
 function insertArticle(){
   $sql = 'INSERT INTO article (aid, aname, apublished, acategory, asubcategory, atitle, acontent, aaddress, amap, atags, aupdate)  
     VALUES ("",
@@ -133,9 +141,9 @@ function insertArticle(){
   RedirectToIndex(HTTPROOT."/index.php?mode=admin&category=article&action=list");
 }
 
-#
-# Update article data
-#
+/**
+ * Update article data
+ */
 function updateArticle(){
   $sql = 'UPDATE article SET
     atitle = "'.$_POST['titreInput'].'",
@@ -159,17 +167,14 @@ function updateArticle(){
   RedirectToIndex(HTTPROOT."/index.php?mode=admin&category=article&action=list");
 }
 
-#
-# Record tag in tag_article table
-#
+/**
+ * Record tag in tag_article table
+ */
 function updateTagRelatedToArticle($SelectedTag, $ArticleID){
   $sql = 'DELETE FROM tag_article WHERE ta_aid = '.$ArticleID;
   SQLQuery($sql);
 
-  #print_r($SelectedTag);
-
   if (!empty($SelectedTag)) {
-    #print_r($SelectedTag);
 
     foreach ($SelectedTag as $tag) {
       $sql = 'SELECT tid FROM tag WHERE tname = "'.$tag.'"';
@@ -183,9 +188,9 @@ function updateTagRelatedToArticle($SelectedTag, $ArticleID){
   
 }
 
-#
-# Delete article data
-#
+/**
+ * Delete article data
+ */
 function deleteArticle(){
   $sql = 'DELETE FROM article WHERE aid = '.$_POST['aidInput'];
   SQLQuery($sql);
@@ -199,12 +204,13 @@ function deleteArticle(){
   RedirectToIndex(HTTPROOT."/index.php?mode=admin&category=article&action=list");
 }
 
-#
-# Save user data 
-#
+/**
+ * Update user data 
+ */
 function updateUser(){
   $sql = 'UPDATE login SET 
     llogin = "'.$_POST['loginInput'].'",
+    lpassword = "'.trim($_POST['passwordInput']).'",
     lavailable = "'.$_POST['availableInput'].'",
     llevel = "'.$_POST['levelInput'].'",
     lcomment = "'.$_POST['commentInput'].'" 
@@ -217,17 +223,15 @@ function updateUser(){
   RedirectToIndex(HTTPROOT."/index.php?mode=admin&category=user&action=list");
 }
 
-#
-# Insert user data
-#
+/**
+ * Insert user data
+ */
 function insertUser(){
-#INSERT INTO `article` (`aid`, `aname`, `apublished`, `acategory`, `asubcategory`, `atitle`, `acontent`, `aaddress`, `amap`, `atags`, `aupdate`) 
-#VALUES ('', 'ty', '0', 'rt', 'rt', 'rt', 'rt', '1,2', 'rt', 'tag', '0000-00-00 00:00:00.000000')
-  $salt = crypt(md5($_POST['passwordInput']), rand(5, 15));
+  //$salt = crypt(md5($_POST['passwordInput']), rand(5, 15));
   $sql = 'INSERT INTO login (lid, llogin, lpassword, lsalt, lavailable, llevel, lcomment)  
     VALUES ("",
     "'.($_POST['loginInput']).'",
-    "'.md5( ($_POST['passwordInput']) ).'",
+    "'.md5( trim($_POST['passwordInput']) ).'",
     "'.$salt.'",
     "'.$_POST['availableInput'].'",
     "'.$_POST['levelInput'].'",
@@ -241,9 +245,9 @@ function insertUser(){
   RedirectToIndex(HTTPROOT."/index.php?mode=admin&category=user&action=list");
 }
 
-#
-# Delete user data
-#
+/**
+ * Delete user data
+ */
 function deleteUser(){
   $sql = 'DELETE FROM login WHERE lid = '.$_POST['lidInput'];
   SQLQuery($sql);
@@ -254,9 +258,9 @@ function deleteUser(){
   RedirectToIndex(HTTPROOT."/index.php?mode=admin&category=user&action=list");
 }
 
-#
-# Save tag data 
-#
+/**
+ * Save tag data 
+ */
 function updateTag(){
   $sql = 'UPDATE tag SET 
     tname = "'.$_POST['tnameInput'].'",
@@ -271,12 +275,10 @@ function updateTag(){
 }
 
 
-#
-# Insert tag data
-#
+/**
+ * Insert tag data
+ */
 function insertTag(){
-#INSERT INTO `article` (`aid`, `aname`, `apublished`, `acategory`, `asubcategory`, `atitle`, `acontent`, `aaddress`, `amap`, `atags`, `aupdate`) 
-#VALUES ('', 'ty', '0', 'rt', 'rt', 'rt', 'rt', '1,2', 'rt', 'tag', '0000-00-00 00:00:00.000000')
   $sql = 'INSERT INTO tag (tname, tcomment)  
     VALUES ("'.($_POST['tnameInput']).'",
     "'.$_POST['tcommentInput'].'"
@@ -289,9 +291,9 @@ function insertTag(){
   RedirectToIndex(HTTPROOT."/index.php?mode=admin&category=tag&action=list");
 }
 
-#
-# Delete tag data
-#
+/**
+ * Delete tag data
+ */
 function deleteTag(){
   $sql = 'DELETE FROM tag WHERE tid = '.$_POST['tidInput'];
   SQLQuery($sql);
@@ -305,56 +307,52 @@ function deleteTag(){
   RedirectToIndex(HTTPROOT."/index.php?mode=admin&category=tag&action=list");
 }
 
-#
-# Print tag into article view
-#
+/**
+ * Print tag into article view
+ */
 function printTags($aid) {
   $SelectedTag = "";
   $sql = 'SELECT tname FROM tag, tag_article WHERE ta_aid = '.$aid.' AND ta_tid = tid'; 
   $reqTagRelatedToArticle = SQLQuery($sql);
-  #echo '<div class="form-inline btn-group inline pull-left">'; 
+  
   while($TagRelatedToArticle = mysql_fetch_assoc($reqTagRelatedToArticle)) {
     $SelectedTag .= '<form action="index.php?mode=show&category=tag&action=list" method="post" class="form-tag-inline">';
       $SelectedTag .= '<input type = "hidden" value = "'.$TagRelatedToArticle["tname"].'" name = "tnameInput">';
       $SelectedTag .= '<button type= "submit" class="btn btn-default btn-xs">'.$TagRelatedToArticle["tname"].'</button>';
     $SelectedTag .= '</form>';
-    #$SelectedTag .= '<a href="'.HTTPROOT.'/index.php?mode=show&category=tag&action=list">'.$TagRelatedToArticle["tname"].'</a> ';
   }
-  #echo '</div>';
   return $SelectedTag;
 }
 
-#
-# Print tag into article view
-#
+/**
+ * Print tag into article view
+ */
 function getTagsList($aid) {
   $SelectedTag = "";
   $sql = 'SELECT tname FROM tag, tag_article WHERE ta_aid = '.$aid.' AND ta_tid = tid'; 
   $reqTagRelatedToArticle = SQLQuery($sql);
-  #echo '<div class="form-inline btn-group inline pull-left">'; 
+  
   while($TagRelatedToArticle = mysql_fetch_assoc($reqTagRelatedToArticle)) {
     $SelectedTag .= '<form action="index.php?mode=show&category=tag&action=list" method="post" class="form-tag-inline">';
       $SelectedTag .= '<input type = "hidden" value = "'.$TagRelatedToArticle["tname"].'" name = "tnameInput">';
       $SelectedTag .= '<button type= "submit" class="btn btn-default btn-xs">'.$TagRelatedToArticle["tname"].'</button>';
     $SelectedTag .= '</form>';
-    #$SelectedTag .= '<a href="'.HTTPROOT.'/index.php?mode=admin&category=tag&action=list">'.$TagRelatedToArticle["tname"].'</a> ';
   }
-  #echo '</div>';
   return $SelectedTag;
 }
 
-#
-# Record log
-#
+/**
+ * Record log
+ */
 function insertLog($msg, $alerte="info"){
   $today = date("Y-m-j H:i:s");
   $sql = 'INSERT INTO log (lid, lmessage, laccount, lalert, ldate) VALUES ("", "'.$msg.'", "'.$_SESSION['user']['user'].'", "'.$alerte.'","'.$today.'")';
   SQLQuery($sql);
 }
 
-#
-# Delete log
-#
+/**
+ * Delete log
+ */
 function deleteLog(){
   if ( empty($_POST['lidInput']) ) {
     $sql = 'DELETE FROM log';
@@ -371,9 +369,9 @@ function deleteLog(){
   RedirectToIndex(HTTPROOT."/index.php?mode=admin&category=log&action=list");
 }
 
-#
-# Insert comment
-#
+/** 
+ * Insert comment
+ */
 function insertComment(){
   $user = $_SESSION['user']['user'];
   
@@ -397,9 +395,9 @@ function insertComment(){
   RedirectToIndex(HTTPROOT."/index.php?mode=show&category=article&action=view&name=".$_POST['anameInput']);
 }
 
-#
-# Update comment
-#
+/**
+ * Update comment
+ */
 function updateComment(){
   $user = $_SESSION['user']['user'];
 	
@@ -418,9 +416,9 @@ function updateComment(){
   RedirectToIndex(HTTPROOT."/index.php?mode=show&category=article&action=view&name=".$_POST['anameInput']);
 }
 
-#
-# init google map acording lat and long 
-#
+/**
+ * init google map acording lat and long 
+ */
 function InitGoogleMap($amap){
   if ($amap) {
     echo '

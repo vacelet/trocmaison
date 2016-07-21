@@ -15,7 +15,7 @@ if (isset($_GET['action'])) {
 		
 		switch ( $_GET['action'] ) {
 
-			case "list": case "edit": case "new":
+			case "list": case "edit": case "new": case "md5pass":
 				include(DOCUMENTROOT.'/mode/admin/user/'.$_GET['action'].'.php');
 				break;
 

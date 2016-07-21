@@ -10,34 +10,34 @@
 
 require_once($_SERVER['DOCUMENT_ROOT']."/include/libraries.php");
 
-$req = SQLQuery('SELECT lid, llogin, llevel, lavailable, lcomment FROM login WHERE lid = '.$_POST['lidInput'].' LIMIT 1'); 
+$req = SQLQuery('SELECT lid, llogin, llevel, lavailable, lpassword, lcomment FROM login WHERE lid = '.$_POST['lidInput'].' LIMIT 1'); 
 $data = mysql_fetch_assoc($req);
 ?> 
 
 <div class="list-group">
   <a href="#" class="list-group-item active">
-    <h4>Edition du compte de <?php echo $data["llogin"]?></h4>
+    <h4>Edition du compte de <?php echo $data["llogin"] ?></h4>
   </a>
 </div>
 <br>
 <form action="index.php?mode=admin&category=user&action=update" method="post">
 	
-	<!-- hidden lid -->
+  <!-- hidden lid -->
   <div class="form-group">
   	<input type = "hidden" value = "<?php echo $data["lid"] ?>" name = "lidInput">
   </div>
 
   <!--  loginInput -->
   <div class="form-group">
-  	<label for="amapInput">Login </label>
-  	<input type="text" class="form-control" value="<?php echo $data["llogin"]?>" name="loginInput">
+  	<label for="loginInput">Login </label>
+  	<input type="text" class="form-control" value="<?php echo $data["llogin"] ?>" name="loginInput">
   </div>
 
   <!--  availableInput -->
   <div class="form-group">
   	<label for="availableInput">Actif - Désactivé</label>
 		<select class="form-control" name="availableInput">
-        <option selected="selected" value="<?php echo $data['lavailable']?>"> <?php if ($data['lavailable']) { echo "Actif";} else {echo "Désactivé";} ?> </option>
+        <option selected="selected" value="<?php echo $data['lavailable'] ?>"> <?php if ($data['lavailable']) { echo "Actif";} else {echo "Désactivé";} ?> </option>
         <option value="1">Actif</option>
         <option value="0">Désactivé</option>
       </select>
@@ -51,6 +51,13 @@ $data = mysql_fetch_assoc($req);
         <option value="admin">admin</option>
 	    <option value="invité">invité</option>
       </select>
+  </div>
+
+  <!--  passwordInput -->
+  <div class="form-group">
+  	<label for="passwordInput">Login </label>
+  	<input type="text" class="form-control" value="<?php echo $data["lpassword"] ?>" name="passwordInput">
+  	<a target="_blank" href="index.php?mode=admin&category=user&action=md5pass">G&eacute;n&eacute;ration d'un mot de passe</a>
   </div>
 
   <!--  Comment -->
